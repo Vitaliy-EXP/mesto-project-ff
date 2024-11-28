@@ -1,3 +1,5 @@
+import '../pages/index.css';
+import { initialCards } from './cards';
 
 // @todo: Темплейт карточки
 export const cardTemplate = document.querySelector('#card-template').content;
@@ -7,9 +9,8 @@ export const placesList = document.querySelector('.places__list');
 
 // @todo: Функция создания карточки
 export function createCard(cardData, deleteCallback) {
-  console.log('99999999999999999999');
   const cardItem = cardTemplate.querySelector('.card').cloneNode(true);
-  const cardImage = cardItem.querySelector('.card__image'); 
+  const cardImage = cardItem.querySelector('.card__image');
   const cardTitle = cardItem.querySelector('.card__title');
   cardImage.src = cardData.link;
   cardImage.alt = cardData.name;
