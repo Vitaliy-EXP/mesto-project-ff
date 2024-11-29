@@ -19,6 +19,14 @@ const addCardForm = document.querySelector('.popup__form[name="new-place"]');
 const profileTitle = document.querySelector('.profile__title');
 const profileDescription = document.querySelector('.profile__description');
 
+// Статичные константы
+const imageModalImage = imageModal.querySelector('.popup__image');
+const imageModalCaption = imageModal.querySelector('.popup__caption');
+const nameInput = editProfileForm.querySelector('.popup__input_type_name');
+const descriptionInput = editProfileForm.querySelector('.popup__input_type_description');
+const placeNameInput = addCardForm.querySelector('.popup__input_type_place-name');
+const linkInput = addCardForm.querySelector('.popup__input_type_link');
+
 // @todo: Вывести карточки на страницу
 function renderCards(cards) {
   cards.forEach((cardData) => {
@@ -39,24 +47,19 @@ closeButtons.forEach(button => {
   });
 });
 
-// Обработчики событий для форм
-editProfileForm.addEventListener('submit', handleEditProfileSubmit);
-addCardForm.addEventListener('submit', handleAddCardSubmit);
-
 // Обработчик события для открытия модального окна с картинками
 function openImageModal(cardItem) {
   const imageSrc = cardItem.querySelector('.card__image').src;
   const imageCaption = cardItem.querySelector('.card__title').textContent;
-  imageModal.querySelector('.popup__image').src = imageSrc;
-  imageModal.querySelector('.popup__caption').textContent = imageCaption;
+  imageModalImage.src = imageSrc;
+  imageModalImage.alt = imageCaption;
+  imageModalCaption.textContent = imageCaption;
   openModal(imageModal);
 }
 
 // Обработчик события для редактирования профиля
 function handleEditProfileSubmit(evt) {
   evt.preventDefault();
-  const nameInput = editProfileForm.querySelector('.popup__input_type_name');
-  const descriptionInput = editProfileForm.querySelector('.popup__input_type_description');
   profileTitle.textContent = nameInput.value;
   profileDescription.textContent = descriptionInput.value;
   closeModal(editProfileModal);
@@ -65,13 +68,15 @@ function handleEditProfileSubmit(evt) {
 // Обработчик события для добавления карточки
 function handleAddCardSubmit(evt) {
   evt.preventDefault();
-  const formData = new FormData(addCardForm);
   const newCard = {
-    name: formData.get('place-name'),
-    link: formData.get('link')
+    name: placeNameInput.value,
+    link: linkInput.value
   };
   const cardItem = createCard(newCard, cardTemplate, deleteCard, likeCard, openImageModal);
   placesList.prepend(cardItem);
   closeModal(addCardModal);
-  addCardForm.reset();
 }
+
+// Обработчики событий для форм
+editProfileForm.addEventListener('submit', handleEditProfileSubmit);
+addCardForm.addEventListener('submit', handleAddCardSubmit);
