@@ -1,4 +1,4 @@
-.popup_is-animated {
+.popup__is-animated {
     display: flex;
     visibility: hidden;
     opacity: 0;
