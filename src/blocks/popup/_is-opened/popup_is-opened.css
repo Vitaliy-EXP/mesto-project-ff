@@ -1,9 +1,3 @@
-/* initial */
-/* .popup__is-opened {
-  display: flex;
-  opacity: 1;
-} */
-
 .popup__is-opened {
   display: flex;
   visibility: visible;
