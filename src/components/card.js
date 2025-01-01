@@ -15,6 +15,7 @@ export function createCard(cardData, cardTemplate, deleteCallback, likeCallback,
   cardNumberOfLikes.textContent = cardData.likes.length;
    // Сохраняем лайки в data-likes
   cardItem.dataset.likes = JSON.stringify(cardData.likes);
+  cardItem.dataset.id = cardData._id;
 
   // Показываем кнопку удаления только на своих карточках
   if (cardData.owner._id === userId) {
@@ -24,10 +25,10 @@ export function createCard(cardData, cardTemplate, deleteCallback, likeCallback,
   }
 
   // Удаление карточки
-  deleteButton.addEventListener('click', () => deleteCallback(cardItem));
-
+  deleteButton.addEventListener('click', () => deleteCallback(cardItem, cardData._id));
+ 
   // Лайк карточки
-    likeButton.addEventListener('click', () => {
+  likeButton.addEventListener('click', () => {
     const currentLikes = JSON.parse(cardItem.dataset.likes);
     likeCallback(cardItem, cardData._id, currentLikes, userId);
   });
@@ -39,7 +40,7 @@ export function createCard(cardData, cardTemplate, deleteCallback, likeCallback,
 }
 
 // Удаление карточки
-export function deleteCard(cardItem) {
+export function deleteCardTemplate(cardItem) {
   cardItem.remove();
 }
 

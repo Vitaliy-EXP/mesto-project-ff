@@ -110,7 +110,6 @@ export const toggleLike = (cardId, isLiked) => {
 
 //Удаляем карточку с сервера
 export const deleteCardFromServer = (cardId) => {
-  console.log('Deleting card with ID:', cardId); // Добавим лог для проверки
   return fetch(`${config.baseUrl}cards/${cardId}`, {
     method: 'DELETE',
     headers: {
@@ -128,3 +127,26 @@ export const deleteCardFromServer = (cardId) => {
       console.log(err);
     });
 };
+
+//Обновление афатара
+export function editAvatarServer(avatarLink) {
+  return fetch(`${config.baseUrl}users/me/avatar`, {
+    method: 'PATCH',
+    headers: {
+      authorization: '0c569154-55a4-446a-bbb8-333eae7b1425',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      avatar: avatarLink
+    })
+  })
+    .then(res => {
+      if (res.ok) {
+        return res.json();
+      }
+      return Promise.reject(`Ошибка: ${res.status}`);
+    })
+    .catch(err => {
+      console.log(err);
+    });
+}

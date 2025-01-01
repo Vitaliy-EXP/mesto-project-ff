@@ -114,6 +114,24 @@
       <button type="button" class="popup__button popup__button_type_confirm">Да</button>
     </div>
   </div>
+  <!-- Модальное окно для редактирования фото пользователя -->
+  <div class="popup popup_type_avatar">
+    <div class="popup__content">
+      <button type="button" class="popup__close"></button>
+      <h3 class="popup__title">Обновить аватар</h3>
+      <form class="popup__form" name="update-avatar" novalidate>
+        <input 
+          type="url" 
+          name="link" 
+          id="avatar_link-input" 
+          class="popup__input popup__input_type_url"
+          placeholder="Ссылка на картинку" 
+          required>
+        <span class="form__input-error avatar_link-input-error"></span>
+        <button type="submit" class="button popup__button">Сохранить</button>
+      </form>
+    </div>
+  </div>
 
 
   <template id="card-template">
