@@ -42,6 +42,7 @@ const placeNameInput = addCardForm.querySelector('.popup__input_type_card-name')
 const linkInput = addCardForm.querySelector('.popup__input_type_url');
 const addCardSubmitButton = addCardForm.querySelector('.popup__button');
 
+
 // Идентификатор пользователя
 const userId = 'df523c1a1c8ff3eff0e52051';
 
@@ -116,6 +117,9 @@ function handleEditProfileSubmit(evt) {
   evt.preventDefault();
   const userName = nameInput.value;
   const about = descriptionInput.value;
+  const formSubmitButton = editProfileForm.querySelector('[type="submit"]');
+
+  renderLoading(true, formSubmitButton); // Начало загрузки
 
   editProfile(userName, about)
     .then(userData => {
@@ -125,6 +129,9 @@ function handleEditProfileSubmit(evt) {
     })
     .catch(err => {
       console.error('Error:', err);
+    })
+    .finally(() => {
+      renderLoading(false, formSubmitButton); // Завершение загрузки
     });
 }
 
@@ -141,6 +148,9 @@ function handleAddCardSubmit(evt) {
   evt.preventDefault();
   const name = placeNameInput.value;
   const link = linkInput.value;
+  const formSubmitButton = addCardForm.querySelector('[type="submit"]');
+
+  renderLoading(true, formSubmitButton); // Начало загрузки
 
   addCard(name, link)
    .then(newCard => {
@@ -154,6 +164,9 @@ function handleAddCardSubmit(evt) {
     })
     .catch(err => {
       console.log(err);
+    })
+    .finally(() => {
+      renderLoading(false, formSubmitButton); // Завершение загрузки
     });
 }
 
@@ -186,22 +199,31 @@ editAvatarForm.addEventListener('submit', (evt) => {
   evt.preventDefault();
   const formInputValue = editAvatarForm.querySelector('#avatar_link-input')?.value;
   const formSubmitButton = editAvatarForm.querySelector('[type="submit"]');
-  formSubmitButton.textContent = "Сохранение...";
+  renderLoading(true, formSubmitButton);
+  
   editAvatarServer(formInputValue)
     .then(response => {
       console.log(response);
       editAvatarForm.reset();
       closeModal(editAvatarModal);
       userAvatar.style.backgroundImage = `url(${formInputValue})`;
-      formSubmitButton.textContent = "Сохранить";
     })
     .catch(err => {
-      formSubmitButton.textContent = "Сохранить";
       console.log(err);
+    })
+    .finally(() => {
+      renderLoading(false, formSubmitButton);
     });
-    
 });
 
+//Лоадер
+function renderLoading(isLoading, formSubmitButton) {
+  if (isLoading === true) {
+    formSubmitButton.textContent = "Сохранение...";
+  } else {
+    formSubmitButton.textContent = "Сохранить";
+  }
+}
 
 
 
