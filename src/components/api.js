@@ -15,8 +15,6 @@ const config = {
         if (res.ok) {
           return res.json();
         }
-
-        // если ошибка, отклоняем промис
         return Promise.reject(`Ошибка: ${res.status}`);
       })
       .catch((err) => {
@@ -128,7 +126,7 @@ export const deleteCardFromServer = (cardId) => {
     });
 };
 
-//Обновление афатара
+//Обновление аватара
 export function editAvatarServer(avatarLink) {
   return fetch(`${config.baseUrl}users/me/avatar`, {
     method: 'PATCH',

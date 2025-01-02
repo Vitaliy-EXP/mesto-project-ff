@@ -42,7 +42,6 @@ const placeNameInput = addCardForm.querySelector('.popup__input_type_card-name')
 const linkInput = addCardForm.querySelector('.popup__input_type_url');
 const addCardSubmitButton = addCardForm.querySelector('.popup__button');
 
-
 // Идентификатор пользователя
 const userId = 'df523c1a1c8ff3eff0e52051';
 
@@ -119,7 +118,7 @@ function handleEditProfileSubmit(evt) {
   const about = descriptionInput.value;
   const formSubmitButton = editProfileForm.querySelector('[type="submit"]');
 
-  renderLoading(true, formSubmitButton); // Начало загрузки
+  renderLoading(true, formSubmitButton);
 
   editProfile(userName, about)
     .then(userData => {
@@ -131,12 +130,11 @@ function handleEditProfileSubmit(evt) {
       console.error('Error:', err);
     })
     .finally(() => {
-      renderLoading(false, formSubmitButton); // Завершение загрузки
+      renderLoading(false, formSubmitButton);
     });
 }
 
 //Редактирование фото пользователя
-
 userAvatar.addEventListener('click', () => {
   console.log("OK Google");
   openModal(editAvatarModal);
@@ -150,7 +148,7 @@ function handleAddCardSubmit(evt) {
   const link = linkInput.value;
   const formSubmitButton = addCardForm.querySelector('[type="submit"]');
 
-  renderLoading(true, formSubmitButton); // Начало загрузки
+  renderLoading(true, formSubmitButton);
 
   addCard(name, link)
    .then(newCard => {
@@ -166,8 +164,30 @@ function handleAddCardSubmit(evt) {
       console.log(err);
     })
     .finally(() => {
-      renderLoading(false, formSubmitButton); // Завершение загрузки
+      renderLoading(false, formSubmitButton);
     });
+}
+
+//Обработчик для редактирования аватара
+function handleEditAvatar(evt) {
+  evt.preventDefault();
+    const formInputValue = editAvatarForm.querySelector('#avatar_link-input')?.value;
+    const formSubmitButton = editAvatarForm.querySelector('[type="submit"]');
+    renderLoading(true, formSubmitButton);
+    
+    editAvatarServer(formInputValue)
+      .then(response => {
+        console.log(response);
+        editAvatarForm.reset();
+        closeModal(editAvatarModal);
+        userAvatar.style.backgroundImage = `url(${formInputValue})`;
+      })
+      .catch(err => {
+        console.log(err);
+      })
+      .finally(() => {
+        renderLoading(false, formSubmitButton);
+      });
 }
 
 // Обработчик события для лайка карточки
@@ -195,27 +215,8 @@ function handleDeleteClick(cardItem, cardId) {
 // Обработчики событий для форм
 editProfileForm.addEventListener('submit', handleEditProfileSubmit);
 addCardForm.addEventListener('submit', handleAddCardSubmit);
-editAvatarForm.addEventListener('submit', (evt) => {
-  evt.preventDefault();
-  const formInputValue = editAvatarForm.querySelector('#avatar_link-input')?.value;
-  const formSubmitButton = editAvatarForm.querySelector('[type="submit"]');
-  renderLoading(true, formSubmitButton);
+editAvatarForm.addEventListener('submit', handleEditAvatar);
   
-  editAvatarServer(formInputValue)
-    .then(response => {
-      console.log(response);
-      editAvatarForm.reset();
-      closeModal(editAvatarModal);
-      userAvatar.style.backgroundImage = `url(${formInputValue})`;
-    })
-    .catch(err => {
-      console.log(err);
-    })
-    .finally(() => {
-      renderLoading(false, formSubmitButton);
-    });
-});
-
 //Лоадер
 function renderLoading(isLoading, formSubmitButton) {
   if (isLoading === true) {
@@ -225,9 +226,4 @@ function renderLoading(isLoading, formSubmitButton) {
   }
 }
 
-
-
-
 enableValidation(validationConfig);
-// TODO: удалить после проверки
-// getProfileName();

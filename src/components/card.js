@@ -1,4 +1,4 @@
-import { toggleLike, deleteCardFromServer } from './api';
+import { toggleLike } from './api';
 
 // Создание карточки
 export function createCard(cardData, cardTemplate, deleteCallback, likeCallback, imageCallback, userId) {
@@ -26,16 +26,15 @@ export function createCard(cardData, cardTemplate, deleteCallback, likeCallback,
 
   // Удаление карточки
   deleteButton.addEventListener('click', () => deleteCallback(cardItem, cardData._id));
- 
+
   // Лайк карточки
   likeButton.addEventListener('click', () => {
     const currentLikes = JSON.parse(cardItem.dataset.likes);
     likeCallback(cardItem, cardData._id, currentLikes, userId);
   });
 
-    // Модальное окно с картинкой
+  // Модальное окно с картинкой
   cardImage.addEventListener('click', () => imageCallback(cardItem));
-
   return cardItem;
 }
 
