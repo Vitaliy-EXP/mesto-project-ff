@@ -11,11 +11,7 @@ export const validationConfig = {
 function showInputError(input, errorElement, config) {
   input.classList.add(config.inputErrorClass);
   errorElement.classList.add(config.errorClass);
-  if (input.validity.patternMismatch) {
-    errorElement.textContent = input.dataset.errorMessage;
-  } else {
-    errorElement.textContent = input.validationMessage;
-  }
+  errorElement.textContent = input.validity.patternMismatch ? input.dataset.errorMessage : input.validationMessage;
 }
 
 // Скрыть ошибку в спане

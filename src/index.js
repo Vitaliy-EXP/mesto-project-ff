@@ -4,7 +4,7 @@ import { openModal, closeModal } from './components/modal';
 import { validationConfig, enableValidation, clearValidation  } from './components/validation';
 import { 
   getInitialCards, 
-  getProfileName, 
+  getUserData, 
   editProfile, 
   addCard, 
   deleteCardFromServer,
@@ -43,8 +43,12 @@ const linkInput = addCardForm.querySelector('.popup__input_type_url');
 const addCardSubmitButton = addCardForm.querySelector('.popup__button');
 
 // Идентификатор пользователя
-const userId = 'df523c1a1c8ff3eff0e52051';
+let userId = null;
 
+//Обработчик ошибок
+export const handleCheckError = (err) => {
+  console.log(err);
+}
 // @todo: Вывести карточки на страницу
 function renderCards(cards) {
   cards.forEach((cardData) => {
@@ -53,31 +57,21 @@ function renderCards(cards) {
   });
 }
 
-// Получаем данные пользователя и обновляем разметку
-getProfileName()
-  .then(userData => {
+// Получаем данные пользователя и карточки параллельно
+Promise.all([getUserData(), getInitialCards()])
+  .then(([userData, cards]) => {
+    userId = userData._id;
     profileTitle.textContent = userData.name;
     profileDescription.textContent = userData.about;
     profileImage.style.backgroundImage = `url(${userData.avatar})`;
-  })
-  .catch(err => {
-    console.error('Ошибка:', err);
-  });
-
-//Получаем промис с карточками и отрисовываем на странице
-getInitialCards()
-  .then(cards => {
     renderCards(cards);
   })
-  .catch(err => {
-    console.log(err);
-  });
+  .catch(handleCheckError);
 
 // Обработчики для открытия и закрытия модальных окон
 editProfileButton.addEventListener('click', () => {
   nameInput.value = profileTitle.textContent;
   descriptionInput.value = profileDescription.textContent;
-  clearValidation(editProfileForm, validationConfig);
   openModal(editProfileModal);
 });
 
@@ -86,7 +80,6 @@ addCardButton.addEventListener('click', () => {
   linkInput.value = '';
   addCardSubmitButton.disabled = true;
   addCardSubmitButton.classList.add(validationConfig.inactiveButtonClass);
-  clearValidation(addCardForm, validationConfig);
   openModal(addCardModal);
 });
 
@@ -126,9 +119,7 @@ function handleEditProfileSubmit(evt) {
       profileDescription.textContent = userData.about;
       closeModal(editProfileModal);
     })
-    .catch(err => {
-      console.error('Error:', err);
-    })
+    .catch(handleCheckError)
     .finally(() => {
       renderLoading(false, formSubmitButton);
     });
@@ -136,9 +127,8 @@ function handleEditProfileSubmit(evt) {
 
 //Редактирование фото пользователя
 userAvatar.addEventListener('click', () => {
-  console.log("OK Google");
+  clearValidation(editAvatarForm, validationConfig);
   openModal(editAvatarModal);
-  // editAvatarServer
 });
 
 // Обработчик события для добавления карточки
@@ -160,9 +150,7 @@ function handleAddCardSubmit(evt) {
       addCardSubmitButton.disabled = true;
       addCardSubmitButton.classList.add(validationConfig.inactiveButtonClass); 
     })
-    .catch(err => {
-      console.log(err);
-    })
+    .catch(handleCheckError)
     .finally(() => {
       renderLoading(false, formSubmitButton);
     });
@@ -182,9 +170,7 @@ function handleEditAvatar(evt) {
         closeModal(editAvatarModal);
         userAvatar.style.backgroundImage = `url(${formInputValue})`;
       })
-      .catch(err => {
-        console.log(err);
-      })
+      .catch(handleCheckError)
       .finally(() => {
         renderLoading(false, formSubmitButton);
       });
@@ -197,19 +183,29 @@ function handleLikeClick(cardItem, cardId) {
 }
 
 // Обработчик события для удаления карточки
+// function handleDeleteClick(cardItem, cardId) {
+//   console.log('Deleting card with ID:', cardId); // Добавим лог для проверки
+//   openModal(confirmDeleteModal);
+//   confirmDeleteButton.addEventListener('click', () => {
+//     deleteCardFromServer(cardId)
+//       .then(() => {
+//         deleteCardTemplate(cardItem);
+//         closeModal(confirmDeleteModal);
+//       })
+//       .catch(handleCheckError);
+//   }, { once: true });
+// }
 function handleDeleteClick(cardItem, cardId) {
-  console.log('Deleting card with ID:', cardId); // Добавим лог для проверки
   openModal(confirmDeleteModal);
-  confirmDeleteButton.addEventListener('click', () => {
+  confirmDeleteButton.onclick = () => {
     deleteCardFromServer(cardId)
       .then(() => {
         deleteCardTemplate(cardItem);
         closeModal(confirmDeleteModal);
+        confirmDeleteButton.onclick = null;
       })
-      .catch(err => {
-        console.error('Error:', err);
-      });
-  }, { once: true });
+      .catch(handleCheckError);
+  }
 }
 
 // Обработчики событий для форм
@@ -219,10 +215,8 @@ editAvatarForm.addEventListener('submit', handleEditAvatar);
   
 //Лоадер
 function renderLoading(isLoading, formSubmitButton) {
-  if (isLoading === true) {
-    formSubmitButton.textContent = "Сохранение...";
-  } else {
-    formSubmitButton.textContent = "Сохранить";
+  if (isLoading) {
+    formSubmitButton.textContent = isLoading ? "Сохранение..." : "Сохранить";
   }
 }
 

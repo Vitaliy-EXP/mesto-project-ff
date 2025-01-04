@@ -21,3 +21,7 @@
 .popup__content_confirm-delete {
   min-height: 181px;
 } 
+
+.popup__content_avatar {
+  min-height: 272px;
+}

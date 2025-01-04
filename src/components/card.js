@@ -1,5 +1,5 @@
 import { toggleLike } from './api';
-
+import { hadnleCheckError, handleCheckError } from '../index';
 // Создание карточки
 export function createCard(cardData, cardTemplate, deleteCallback, likeCallback, imageCallback, userId) {
   const cardItem = cardTemplate.querySelector('.places__item').cloneNode(true);
@@ -13,24 +13,19 @@ export function createCard(cardData, cardTemplate, deleteCallback, likeCallback,
   cardImage.alt = cardData.name;
   cardTitle.textContent = cardData.name;
   cardNumberOfLikes.textContent = cardData.likes.length;
-   // Сохраняем лайки в data-likes
-  cardItem.dataset.likes = JSON.stringify(cardData.likes);
   cardItem.dataset.id = cardData._id;
 
   // Показываем кнопку удаления только на своих карточках
   if (cardData.owner._id === userId) {
     deleteButton.style.display = 'block';
+     deleteButton.addEventListener('click', () => deleteCallback(cardItem, cardData._id));
   } else {
     deleteButton.style.display = 'none';
   }
 
-  // Удаление карточки
-  deleteButton.addEventListener('click', () => deleteCallback(cardItem, cardData._id));
-
   // Лайк карточки
   likeButton.addEventListener('click', () => {
-    const currentLikes = JSON.parse(cardItem.dataset.likes);
-    likeCallback(cardItem, cardData._id, currentLikes, userId);
+    likeCallback(cardItem, cardData._id, userId);
   });
 
   // Модальное окно с картинкой
@@ -44,12 +39,12 @@ export function deleteCardTemplate(cardItem) {
 }
 
 // Лайк
-export function likeCard(cardItem, cardId, likes, userId) {
+export function likeCard(cardItem, cardId, userId) {
   const likeButton = cardItem.querySelector('.card__like-button');
   const cardNumberOfLikes = cardItem.querySelector('.card__number-of-likes');
 
   // Проверяем, есть ли лайк от текущего пользователя
-  const isLiked = likes.some(user => user._id === userId);
+  const isLiked = likeButton.classList.contains('card__like-button_is-active');
 
   toggleLike(cardId, isLiked)
     .then(updatedCard => {
@@ -60,16 +55,7 @@ export function likeCard(cardItem, cardId, likes, userId) {
       const isStillLiked = updatedCard.likes.some(user => user._id === userId);
 
       // Обновляем состояние кнопки
-      if (isStillLiked) {
-        likeButton.classList.add('card__like-button_is-active');
-      } else {
-        likeButton.classList.remove('card__like-button_is-active');
-      }
-
-      // Обновляем массив лайков в DOM
-      cardItem.dataset.likes = JSON.stringify(updatedCard.likes);
+      likeButton.classList.toggle('card__like-button_is-active', isStillLiked);
     })
-    .catch(err => {
-      console.error('Ошибка в likeCard:', err);
-    });
+    .catch(handleCheckError);
 }
