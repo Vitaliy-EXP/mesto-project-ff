@@ -215,9 +215,7 @@ editAvatarForm.addEventListener('submit', handleEditAvatar);
   
 //Лоадер
 function renderLoading(isLoading, formSubmitButton) {
-  if (isLoading) {
-    formSubmitButton.textContent = isLoading ? "Сохранение..." : "Сохранить";
-  }
+  formSubmitButton.textContent = isLoading ? "Сохранение..." : "Сохранить";
 }
 
 enableValidation(validationConfig);
