@@ -1,7 +1,7 @@
 import './pages/index.css';
 import { createCard, deleteCardTemplate, likeCard } from './components/card';
 import { openModal, closeModal } from './components/modal';
-import { validationConfig, enableValidation, clearValidation  } from './components/validation';
+import { enableValidation, clearValidation  } from './components/validation';
 import { 
   getInitialCards, 
   getUserData, 
@@ -10,6 +10,15 @@ import {
   deleteCardFromServer,
   editAvatarServer
 } from './components/api';
+
+const validationConfig = {
+  formSelector: '.popup__form',
+  inputSelector: '.popup__input',
+  submitButtonSelector: '.popup__button',
+  inactiveButtonClass: 'popup__button_disabled',
+  inputErrorClass: 'popup__input_type_error',
+  errorClass: 'popup__error_visible',
+};
 
 // @todo: Темплейт карточки
 const cardTemplate = document.querySelector('#card-template').content;
@@ -183,18 +192,6 @@ function handleLikeClick(cardItem, cardId) {
 }
 
 // Обработчик события для удаления карточки
-// function handleDeleteClick(cardItem, cardId) {
-//   console.log('Deleting card with ID:', cardId); // Добавим лог для проверки
-//   openModal(confirmDeleteModal);
-//   confirmDeleteButton.addEventListener('click', () => {
-//     deleteCardFromServer(cardId)
-//       .then(() => {
-//         deleteCardTemplate(cardItem);
-//         closeModal(confirmDeleteModal);
-//       })
-//       .catch(handleCheckError);
-//   }, { once: true });
-// }
 function handleDeleteClick(cardItem, cardId) {
   openModal(confirmDeleteModal);
   confirmDeleteButton.onclick = () => {
